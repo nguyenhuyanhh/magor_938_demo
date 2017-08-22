@@ -6,14 +6,15 @@
 \usepackage{setspace}
 \onehalfspacing
 
+\usepackage[hidelinks]{hyperref}
 \usepackage{graphicx}
-\usepackage{float}
-\usepackage{multirow}
-\usepackage{listings}
-\usepackage{color}
-\usepackage{booktabs}
-\usepackage{tabularx}
-\usepackage{amssymb}
+% \usepackage{float}
+% \usepackage{multirow}
+% \usepackage{listings}
+% \usepackage{color}
+% \usepackage{booktabs}
+% \usepackage{tabularx}
+% \usepackage{amssymb}
 
 % some configurations for the listings package
 % \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -41,9 +42,10 @@
 
 % actual report
 \begin{document}
-\input{cover.tex}
 \pagenumbering{gobble}
+\input{cover.tex}
 \tableofcontents
 \newpage
 \pagenumbering{arabic}
+\input{intro.tex}
 \end{document}
