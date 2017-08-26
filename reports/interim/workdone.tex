@@ -1,0 +1,70 @@
+\chapter{Summary of Work Done}
+
+This chapter presents a summary of the work done so far for the project. Section 2.1 covers the implemented system architecture, while Section 2.2 details the modules implemented for the integrated system.
+
+The source code for the system has been uploaded to GitHub; GitHub also serves as the version control and issue management system for the project.
+
+\section{System Architecture}
+
+This section outlines the architecture of the implemented transcription system. It comprises two independent components --- \textit{modules} and \textit{data} --- each resides in its own subfolder within the system. The main system executable links these two components together; it executes \textit{procedures}, which are collections of modules in a pipeline, to complete a transcription.
+
+The top level folder structure is as follows:
+
+\begin{lstlisting}
+    crawl/
+        --raw files--
+    data/
+        --data files--
+    modules/
+        --module files--
+    system.py               # system executable
+    manifest.json           # system manifest
+\end{lstlisting}
+
+The components of the system architecture would be detailed below.
+
+\subsection{Data Folders}
+
+The data used in the system are of two types. The first type is raw data, which are unprocessed audio or video files; these files are stored under \verb|crawl/|. The second type is processed data, which are stored under \verb|data/| in a specialised folder structure:
+
+\begin{lstlisting}
+    data/
+        file_id/
+            raw/
+                --the raw file--
+            module_1/
+                --output for module 1--
+            module_2/
+                --output for module 2--
+            ...
+            module_n/
+                --output for module n--
+            temp/
+                module_1/
+                    --temporary files for module 1--
+                ...
+\end{lstlisting}
+
+Under this folder structure, at system startup the system executable would import the raw file from \verb|crawl/| into the \verb|data/file_id/raw/| subfolder, with the \verb|file_id| being a unique identifier. As a procedure is being executed, individual module's output files would be stored in the respective subfolder under \verb|data/file_id|, while the module's temporary files would be stored under \verb|data/file_id/temp|.
+
+This structure allows the system to be fully modular; any module would only need to know its own folder to dump íts output, and practically any operation could be traced to the module level. Individual modules would be responsible in implementing this structure.
+
+\subsection{Modules and Procedures}
+
+All modules in the system are placed under the subfolder \verb|modules/| according to the following folder structure:
+
+\begin{lstlisting}
+    modules/
+        module_id_1/
+            setup           # module setup script
+            module.py       # module executable
+            manifest.json   # module manifest
+            --optional module data and executables--
+        module_id_2/
+            ...
+        ...            
+\end{lstlisting}
+
+Each module has its own folder; the folder name is a module identifier in the form of \verb|module_name-version|. This allows multiple versions of a module to co-exist in the system. In the module folder there are three compulsory components.
+
+\section{Modules Implemented}
