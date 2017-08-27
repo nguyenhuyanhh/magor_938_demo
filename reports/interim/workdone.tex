@@ -21,7 +21,7 @@ The top level folder structure is as follows:
     manifest.json           # system manifest
 \end{lstlisting}
 
-The components of the system architecture would be detailed below.
+The whole system would be implemented in Python, using JSON as the manifest language. The components of the system architecture would be detailed below.
 
 \subsection{Data Folders}
 
@@ -49,7 +49,7 @@ Under this folder structure, at system startup the system executable would impor
 
 This structure allows the system to be fully modular; any module would only need to know its own folder to dump íts output, and practically any operation could be traced to the module level. Individual modules would be responsible in implementing this structure.
 
-\subsection{Modules and Procedures}
+\subsection{Modules}
 
 All modules in the system are placed under the subfolder \verb|modules/| according to the following folder structure:
 
@@ -65,6 +65,48 @@ All modules in the system are placed under the subfolder \verb|modules/| accordi
         ...            
 \end{lstlisting}
 
-Each module has its own folder; the folder name is a module identifier in the form of \verb|module_name-version|. This allows multiple versions of a module to co-exist in the system. In the module folder there are three compulsory components.
+Each module has its own folder; the folder name is a module identifier in the form of \verb|module_name-version|. This allows multiple versions of a module to co-exist in the system. In each module folder there are three compulsory components --- a \verb|setup| script to setup the module and all its dependencies, a Python executable \verb|module.py| to call the module, and a manifest file in JSON format to specify the module details.
+
+The manifest file must conform to this structure:
+
+\begin{lstlisting}
+    {
+        "name": "module_name",
+        "version": "module_version",
+        "requires": [],
+        "inputs": [],
+        "outputs": []
+    }
+\end{lstlisting}
+
+\verb|requires|, \verb|inputs| and \verb|outputs| are all JSON lists. \verb|requires| is a list of (optional) data files and executables required for the module's functionality; these files should be in place after running the \verb|setup| script. \verb|inputs| and \verb|outputs| are lists of subfolders under \verb|data/file_id|\footnote{See Section 2.1.1 Data Folders.} where the module would pull its input files and push its output files, respectively. In this way, the manifest file serves as a blueprint of the module to the system. This blueprint would be realised by the \verb|module.py| executable. Overall, the three compulsory components work together to ensure each module is self-contained.
+
+\subsection{System Manifest and Executable}
+
+The system manifest specifies system-level properties. It is a JSON file following this specification:
+
+\begin{lstlisting}
+    {
+        "procedures": {
+            "procedure_id_1": [],
+            "procedure_id_2": [],
+            ...
+        },
+        "file_types":{
+            "audio": [],
+            "video": []
+        }
+    }
+\end{lstlisting}
+
+\verb|file_types| would specify which file extensions are accepted by the system; only raw files of these types would be imported during runtime. The separation of \verb|audio| and \verb|video| types is used for future error-checking. \verb|procedures| as mentioned in the beginning of this chapter are pipelines of modules to perform a certain function. These procedures are specified in the manifest by unique \verb|procedure_ids|; each procedure is a list of \verb|module_ids|\footnote{See Section 2.1.2 Modules.} outlining the order of execution of the modules on the targeted audio or video file. In this way, the system manifest provides a blueprint of the whole system to the system executable; it would execute a procedure according to this flow:
+
+\begin{itemize}
+    \item Startup manifest checks --- load all module manifests and system manifest, perform error checks and eliminate all ``broken'' modules and procedures
+    \item File import --- import the correct files from \verb|crawl/| into the data structure in \verb|data/|\footnote{See Section 2.1.1 Data Folders.}
+    \item Pipeline --- call the modules in the procedure one-by-one in the order specified by the system manifest
+\end{itemize}
+
+Multiple procedures could be applied to one file, and multiple files could be processed in one run of the system executable.
 
 \section{Modules Implemented}
