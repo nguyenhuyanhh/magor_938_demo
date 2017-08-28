@@ -1,0 +1,70 @@
+\chapter{Summary of Work to be Done}
+
+This chapter presents a summary of the remaining work items for the project. Section 3.1 outlines the effort to extend the implemented transcription system to handle multi-channel recordings, which is a major application focus. Section 3.2 details the necessary system improvements that needs to be implemented to realise all the objectives in Chapter 1\footnote{See Section 1.2 Objective.}.
+
+\section{Modules and Procedures for Multi-channel Recording Transcription}
+
+A major application focus in SLTG is multi-channel recording transcription, which is applied in a meeting room scenario. In this scenario, there are a number of speakers (denote \texttt{n}) participating in a meeting, having natural conversation with each other. Each speaker is speaking into his/ her own close-talk microphone, and there is a fix number of far-talk microphones (denote \texttt{m}) to record the entire meeting room. Despite being close to the speaker, in most meeting room environments the close-talk microphone would also capture other speakers' voice and background noise, which could impede transcription. The problem statement is, given the set of \texttt{n} close-talk and \texttt{m} far-talk recordings, perform an accurate speaker identification, and based on that derive an accurate transcription for the meeting.
+
+The proposed workflow comprises of an initial stage, using the process of voice activity detection (VAD) across all the close- and far-talk recordings to determine which segments of the recordings are spoken by whom. All the remaining false segments will be clipped to produce \texttt{n} (hopefully pure) close-talk recordings which will be transcribed. The implementation would involve developing the VAD module and procedure.
+
+\section{System-wide Improvements}
+
+As of this moment, the first three qualitative objectives of the project have been relatively satisfied --- Modularity, Extensibility and Robustness. Effort would be focused in realising the two remaining objectives, which is Versioning and Logging and Reporting.
+
+\subsection{Versioning}
+
+The final system must be able to accommodate different module versions, and for each module version the output of such module must also be versioned. The proposed method to achieve this goal is to introduce the concept of \texttt{process}, a configuration of procedures and modules; when a module is upgraded, the associated procedure would be forked into a different procedure containing the module, and the initial process would be forked into a different process containing the new procedure. Processes should have separate folders under \texttt{data/}, resulting in this folder structure:
+
+\begin{lstlisting}
+    data/
+        process_id_1/
+            file_id_1/
+                raw/
+                module_1/
+                module_2/
+                ...
+                module_n/
+                temp/
+            file_id_2/
+                ...
+            ...
+        process_id_2/
+            file_id_1/
+            file_id_2/
+\end{lstlisting}
+
+The folder structure under \texttt{file\_id} remains the same, which allows for efficient evaluation of different version outputs. To specify the processes in system manifest, the following structure is proposed:
+
+\begin{lstlisting}
+    {
+        "processes": {
+            "process_id_1": {
+                "procedure_id_1": [],
+                "procedure_id_2": [],
+                ...
+            },
+            "process_id_2": {
+                "procedure_id_1": [],
+                "procedure_id_2": [],
+                ...
+            },
+            ...
+        },
+        ...
+    }
+\end{lstlisting}
+
+To implement this structure, the system executable must be re-engineered to load the new manifest and output data to the data folders correctly. There should be minimal changes to the implemented modules, as there are no hard-coded paths that could be affected by the change in data folder structure.
+
+\subsection{Logging and Reporting}
+
+The final system must exhibit developer-friendly behaviours --- it must have adequate debugging logs, and it must provide an interface to report common statistics about the current data.
+
+For logging, the system executable and modules are all using the Python standard library module \texttt{logging} to produce command-line logs, in the following format:
+
+\begin{lstlisting}
+    %(asctime)s (%(name)s | %(levelname)s) : %(message)s
+\end{lstlisting}
+
+For reporting, the proposed addition to the system executable is a reporting function to aggregate data from the data folders and provide a convenient reporting format. The usual statistics to provide are the lengths of the audio/ video streams, total processing time separated by process/ procedure, etc. Helper functionality would be incorporated accordingly to enable reporting.

@@ -153,7 +153,7 @@ The module \texttt{google-1} would take the resampled audio stream from \texttt{
 
 \underline{(b) In-house LVCSR system}
 
-In the Speech and Language Technology Group in the School of Computer Science and Engineering, there have been efforts to build a LVCSR system for the English language. This effort is led by Dr.\ Li Haihua; the system is based on \texttt{Kaldi}, an open-source toolkit for speech recognition written in C++. The system is provided as a black box; the models and executable are conveniently packaged together. A Python wrapper has been implemented.
+In SLTG, there have been efforts to build a LVCSR system for the English language. This effort is led by Dr.\ Li Haihua; the system is based on \texttt{Kaldi}, an open-source toolkit for speech recognition written in C++. The system is provided as a black box; the models and executable are conveniently packaged together. A Python wrapper has been implemented.
 
 The module \texttt{lvcsr-1701} would take the resampled audio stream from \texttt{data/file\\ \_id/resample} and the segmentation file from \texttt{data/file\_id/diarization}, then perform the decoding operation. Intermediate results would be stored in \texttt{data/file\_id/\\ temp/lvcsr}, and the final transcript would be stored in \texttt{data/file\_id/transcript/\\lvcsr}.
 
@@ -177,7 +177,7 @@ The two procedures overlap at the first two stages; if both are applied to a fil
 
 In the context of an image, captioning is the process to output a textual description of said image. This description could contain the objects in the image as well as their relative positions and relations. An automated captioning system would be able to recognise such information; coupled with language understanding, it would be able to produce a human-like summary of the image.
 
-In the Speech and Language Technology Group in the School of Computer Science and Engineering, there have been efforts to apply an automated image captioning system to the specific task of keyframe captioning. A video usually contain many scenes, each scene identifiable by a keyframe; these keyframes would be extracted out and captioned in order to derive meaning to a scene, and the results could be indexed for further use. This work was done by Peter in his final-year project; it is based on Karpathy's \texttt{neuraltalk2} library, which in turn is bulit upon \texttt{Torch}, an open-source deep learning library. Peter's stand-alone system could be converted into a pipeline as follows:
+In SLTG, there have been efforts to apply an automated image captioning system to the specific task of keyframe captioning. A video usually contain many scenes, each scene identifiable by a keyframe; these keyframes would be extracted out and captioned in order to derive meaning to a scene, and the results could be indexed for further use. This work was done by Peter in his final-year project; it is based on Karpathy's \texttt{neuraltalk2} library, which in turn is bulit upon \texttt{Torch}, an open-source deep learning library. Peter's stand-alone system could be converted into a pipeline as follows:
 
 \begin{figure}[h]
 \begin{center}
@@ -190,7 +190,7 @@ Using the same principles applied to the main task of transcription, for keyfram
 
 \subsubsection{Video conversion}
 
-Similar to audio streams, video streams come in many different formats. A similar process to resampling\footnote{See Section 2.2.1 Modules and Procedures for Transcription} is employed, which converts different video streams to a common format --- MPEG Layer 4 video (\texttt{.mp4} files).
+Similar to audio streams, video streams come in many different formats. A similar process to resampling\footnote{See Section 2.2.1 Modules and Procedures for Transcription.} is employed, which converts different video streams to a common format --- MPEG Layer 4 video (\texttt{.mp4} files).
 
 The converter is implemented similarly using \texttt{FFmpeg} and the Python wrapper \texttt{FFmpy}. The module \texttt{convert-1.0} would take a raw video file from \texttt{data/file\_id/raw}, convert it and put the converted file in \texttt{data/file\_id/convert}. It is a reasonably quick process as well; no temporary files are created and successful completion is checked by the presence of the output file.
 
