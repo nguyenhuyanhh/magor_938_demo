@@ -30,13 +30,13 @@ then fed one-by-one to a transcription system; combining all the results gives
 the final transcript.
 
 For each process in the pipeline, there exists multiple solutions to perform
-the task. Many of them are either public APIs or open-source; however, they exist
-as ``black boxes'' --- each solution accepts input and produces output in a
-specific manner. This presents a challenge in integrating multiple solutions to
-realise the transcription pipeline. Additionally, given an integrated pipeline,
-upgrading or changing any component could potentially break the pipeline. After
-the pipeline is upgraded, there must also be a mechanism to update the
-transcriptions and keep track of versions. 
+the task. Many of them are either public application programming interfaces (APIs)
+or open-source; however, they exist as ``black boxes'' --- each solution accepts
+input and produces output in a specific manner. This presents a challenge in
+integrating multiple solutions to realise the transcription pipeline.
+Additionally, given an integrated pipeline, upgrading or changing any component
+could potentially break the pipeline. After the pipeline is upgraded, there must
+also be a mechanism to update the transcriptions and keep track of versions. 
 
 This project proposes an integrated transcription system; apart from realising
 the transcription pipeline, this system would be able to accommodate versioning
