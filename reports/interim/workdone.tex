@@ -191,40 +191,84 @@ specification is usually a format of single-channel PCM (a ``mono'' \texttt{.wav
 file), a sampling rate of 16000 samples per second (16kHz) and a bit rate of 16 bits.
 
 The resampler is implemented using \texttt{FFmpeg}, an open-source, cross-platform
-audio and video processing library. The library is well-known and well-tested;
-wrappers around its command-line interface are available for many programming
-languages. For ease of implementation in Python, the Python wrapper \texttt{FFmpy}
-is used; no additional packages are required.
+audio and video processing library~\cite{ffmpeg}. The library is well-known and 
+well-tested; wrappers around its command-line interface are available for many 
+programming languages. For ease of implementation in Python, the Python wrapper
+\texttt{FFmpy}~\cite{ffmpy} is used; no additional packages are required.
 
 The module \texttt{resample-1.0} would take an imported audio or video raw file from \texttt{data/file\_id/raw}, resample it and put the resampled file in \texttt{data/file\_id/resample}. It is a fairly quick process; no temporary files are created and successful completion is checked by the presence of the output file.
 
 \subsubsection{Speaker diarization}
 
-After resampling, the audio stream needs to be broken down into smaller segments for transcription; these segments are usually single-speaker. Audio streams could be single-speaker or multi-speaker; speaker diarization is performed to produce single-speaker segments.
+After resampling, the audio stream needs to be broken down into smaller segments
+for transcription; these segments are usually single-speaker. Audio streams could
+be single-speaker or multi-speaker; speaker diarization is performed to produce
+single-speaker segments.
 
-The diarizer is implemented using LIUM Speaker Diarization, an open-source package developed by researchers at Laboratoire d'Informatique de l'Université du Maine. It produces a segmentation file (\texttt{.seg}) which details the start time, end time and \texttt{speaker\_id} of all identified segments. The source package is in Java; however there is a convenient command-line interface which allows for a Python wrapper (using the standard Python library module \texttt{subprocess}).
+The diarizer is implemented using LIUM Speaker Diarization~\cite{lium}, an
+open-source package developed by researchers at Laboratoire d'Informatique de
+l'Université du Maine. It produces a segmentation file 
+(\texttt{.seg})~\cite{lium-seg} which details the start time, end time and
+\texttt{speaker\_id} of all identified segments. The source package is in Java;
+however there is a convenient command-line interface~\cite{lium} which allows
+for a Python wrapper (using the standard Python library module
+\texttt{subprocess}).
 
-The module \texttt{diarize-8.4.1} would take a resampled audio stream from \texttt{data/file\\ \_id/resample}, perform speaker diarization and put the segmentation file in \texttt{data/file\\ \_id/diarization}. Similar to the previous module, the process is reasonably fast and successful completion is checked by the presence of a non-empty output file.
+The module \texttt{diarize-8.4.1} would take a resampled audio stream from
+\texttt{data/file\\ \_id/resample}, perform speaker diarization and put the
+segmentation file in \texttt{data/file\\ \_id/diarization}. Similar to the
+previous module, the process is reasonably fast and successful completion is
+checked by the presence of a non-empty output file.
 
 \subsubsection{Transcription}
 
-After successful speaker diarization, the individual segments would be sent to a transcription engine; the individual transcripts would then be combined with the timing and speaker information from diarization, to produce the complete transcription. Two engines are implemented --- the first one based on Google Cloud Speech API, the second an in-house LVCSR system.
+After successful speaker diarization, the individual segments would be sent
+to a transcription engine; the individual transcripts would then be combined
+with the timing and speaker information from diarization, to produce the complete
+transcription. Two engines are implemented --- the first one based on Google
+Cloud Speech API, the second an in-house LVCSR system.
 
 \underline{(a) Google Cloud Speech API}
 
-Cloud Speech API is developed by Google, providing the same speech recognition capabilities powering Google's native applications (such as Voice Search) to developers. A Python client library (\texttt{google-cloud-speech}) is available which would form the basis of the implemented module. However to perform speech recognition, one needs to provide a Google API service account key and this key is used for usage tracking; the free tier only allows \$300 of credits to be used in 12 months\footnote{Usage is charged in terms of 15-second blocks; each block is \$0.0025.}. As such, care must be taken not to exceed the limit; complete checks are heavily enforced to reduce the number of unnecessary API operations.
+Cloud Speech API~\cite{gcs} is developed by Google, providing the same speech
+recognition capabilities powering Google's native applications (such as Voice
+Search) to developers. A Python client library (\texttt{google-cloud-speech})
+~\cite{gh-gcs} is available which would form the basis of the implemented module.
+However to perform speech recognition, one needs to provide a Google API service
+account key~\cite{gcs-api-key} and this key is used for usage tracking; the free
+tier only allows \$300 of credits to be used in 12 months~\cite{gcs-free}
+\footnote{Usage is charged in terms of 15-second blocks; each block is \$0.0025.}.
+As such, care must be taken not to exceed the limit; complete checks are heavily
+enforced to reduce the number of unnecessary API operations.
 
-The module \texttt{google-1} would take the resampled audio stream from \texttt{data/file\_id/\\ resample}, split it into individual segments according to the result from \texttt{data/file\_id/\\diarization}, then sent the segments to Google Cloud Speech API\@. Intermediate results would be stored in \texttt{data/file\_id/temp/google}, and the final transcript would be stored in \texttt{data/file\_id/transcript/google}.
+The module \texttt{google-1} would take the resampled audio stream from
+\texttt{data/file\_id/\\ resample}, split it into individual segments according
+to the result from \texttt{data/file\_id/\\diarization}, then sent the segments
+to Google Cloud Speech API\@. Intermediate results would be stored in
+\texttt{data/file\_id/temp/google}, and the final transcript would be stored in
+\texttt{data/file\_id/transcript/google}.
 
 \underline{(b) In-house LVCSR system}
 
-In SLRG, there have been efforts to build a LVCSR system for the English language. This effort is led by Dr.\ Li Haihua; the system is based on \texttt{Kaldi}, an open-source toolkit for speech recognition written in C++. The system is provided as a black box; the models and executable are conveniently packaged together. A Python wrapper has been implemented.
+In SLRG, there have been efforts to build a LVCSR system for the English
+language~\cite{slrg}. This effort is led by Dr.\ Li Haihua; the system is based
+on \texttt{Kaldi}~\cite{Povey_ASRU2011}, an open-source toolkit for speech
+recognition written in C++. The system is provided as a black box; the models
+and executable are conveniently packaged together. A Python wrapper has been
+implemented.
 
-The module \texttt{lvcsr-1701} would take the resampled audio stream from \texttt{data/file\\ \_id/resample} and the segmentation file from \texttt{data/file\_id/diarization}, then perform the decoding operation. Intermediate results would be stored in \texttt{data/file\_id/\\ temp/lvcsr}, and the final transcript would be stored in \texttt{data/file\_id/transcript/\\lvcsr}.
+The module \texttt{lvcsr-1701} would take the resampled audio stream from
+\texttt{data/file\\ \_id/resample} and the segmentation file from
+\texttt{data/file\_id/diarization}, then perform the decoding operation.
+Intermediate results would be stored in \texttt{data/file\_id/\\ temp/lvcsr},
+and the final transcript would be stored in
+\texttt{data/file\_id/transcript/\\lvcsr}.
 
 \subsubsection{Procedures}
 
-As there are two independent engines for transcription, there would be two procedures applicable for the transcription task. The corresponding system manifest would be as follows:
+As there are two independent engines for transcription, there would be two
+procedures applicable for the transcription task. The corresponding system
+manifest would be as follows:
 
 \begin{lstlisting}
     {
@@ -236,13 +280,26 @@ As there are two independent engines for transcription, there would be two proce
     }
 \end{lstlisting}
 
-The two procedures overlap at the first two stages; if both are applied to a file, for the latter procedure the system executable would skip the (completed) resampling and diarization and jump straight into transcription.
+The two procedures overlap at the first two stages; if both are applied to
+a file, for the latter procedure the system executable would skip the
+(completed) resampling and diarization and jump straight into transcription.
 
 \subsection{Modules and Procedures for Keyframe Captioning}
 
-In the context of an image, captioning is the process to output a textual description of said image. This description could contain the objects in the image as well as their relative positions and relations. An automated captioning system would be able to recognise such information; coupled with language understanding, it would be able to produce a human-like summary of the image.
+In the context of an image, captioning is the process to output a textual
+description of said image. This description could contain the objects in the
+image as well as their relative positions and relations. An automated captioning
+system would be able to recognise such information; coupled with language
+understanding, it would be able to produce a human-like summary of the image.
 
-In SLRG, there have been efforts to apply an automated image captioning system to the specific task of keyframe captioning. A video usually contain many scenes, each scene identifiable by a keyframe; these keyframes would be extracted out and captioned in order to derive meaning to a scene, and the results could be indexed for further use. This work was done by Peter in his final-year project; it is based on Karpathy's \texttt{neuraltalk2} library, which in turn is bulit upon \texttt{Torch}, an open-source deep learning library. Peter's stand-alone system could be converted into a pipeline as follows:
+In SLRG, there have been efforts to apply an automated image captioning system
+to the specific task of keyframe captioning. A video usually contain many scenes,
+each scene identifiable by a keyframe; these keyframes would be extracted out and
+captioned in order to derive meaning to a scene, and the results could be indexed
+for further use. This work was done by Peter in his final-year project~\cite{peter}
+; it is based on Karpathy's \texttt{neuraltalk2} library~\cite{nrtalk2}, which
+in turn is bulit upon \texttt{Torch}~\cite{th}, an open-source deep learning
+library. Peter's stand-alone system could be converted into a pipeline as follows:
 
 \begin{figure}[h]
 \begin{center}
@@ -251,21 +308,36 @@ In SLRG, there have been efforts to apply an automated image captioning system t
 \end{center}
 \end{figure}
 
-Using the same principles applied to the main task of transcription, for keyframe captioning two components of the pipeline would be modularized: video conversion and caption generator.
+Using the same principles applied to the main task of transcription, for keyframe
+captioning two components of the pipeline would be modularized: video conversion
+and caption generator.
 
 \subsubsection{Video conversion}
 
-Similar to audio streams, video streams come in many different formats. A similar process to resampling\footnote{See Section 2.2.1 Modules and Procedures for Transcription.} is employed, which converts different video streams to a common format --- MPEG Layer 4 video (\texttt{.mp4} files).
+Similar to audio streams, video streams come in many different formats. A similar
+process to resampling\footnote{See Section 2.2.1 Modules and Procedures for
+Transcription.} is employed, which converts different video streams to a common
+format --- MPEG Layer 4 video (\texttt{.mp4} files).
 
-The converter is implemented similarly using \texttt{FFmpeg} and the Python wrapper \texttt{FFmpy}. The module \texttt{convert-1.0} would take a raw video file from \texttt{data/file\_id/raw}, convert it and put the converted file in \texttt{data/file\_id/convert}. It is a reasonably quick process as well; no temporary files are created and successful completion is checked by the presence of the output file.
+The converter is implemented similarly using \texttt{FFmpeg}~\cite{ffmpeg} and the
+Python wrapper \texttt{FFmpy}~\cite{ffmpy}. The module \texttt{convert-1.0} would
+take a raw video file from \texttt{data/file\_id/raw}, convert it and put the
+converted file in \texttt{data/file\_id/convert}. It is a reasonably quick process
+as well; no temporary files are created and successful completion is checked by the
+presence of the output file.
 
 \subsubsection{Caption generator}
 
-After conversion, the video stream would be extracted for keyframes, and the keyframes captioned by \texttt{neuraltalk2}. The module \texttt{capgen-1.0} takes the converted video file from \texttt{data/file\_id/convert}, then generate keyframes and their caption into \texttt{data/file\_id/\\ keyframes}. The temporary files are stored in \texttt{data/file\_id/temp/capgen}.
+After conversion, the video stream would be extracted for keyframes, and the 
+keyframes captioned by \texttt{neuraltalk2}. The module \texttt{capgen-1.0} takes
+the converted video file from \texttt{data/file\_id/convert}, then generate
+keyframes and their caption into \texttt{data/file\_id/\\ keyframes}. The
+temporary files are stored in \texttt{data/file\_id/temp/capgen}.
 
 \subsubsection{Procedure}
 
-The applicable procedure is \texttt{capgen}, and it is specified as follows in the system manifest:
+The applicable procedure is \texttt{capgen}, and it is specified as follows in
+the system manifest:
 
 \begin{lstlisting}
     {
