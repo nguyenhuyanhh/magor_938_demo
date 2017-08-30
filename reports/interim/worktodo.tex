@@ -30,7 +30,8 @@ involve developing the VAD module and procedure.
 
 \section{System-wide Improvements}
 
-As of this moment, the first three qualitative objectives of the project have
+As of this moment, the first three qualitative objectives\footnote{See Section
+1.2 Objective.} of the project have
 been relatively satisfied --- Modularity, Extensibility and Robustness. Effort
 would be focused in realising the two remaining objectives, which is Versioning
 and Logging and Reporting.
@@ -111,3 +112,20 @@ function to aggregate data from the data folders and provide a convenient report
 format. The usual statistics to provide are the lengths of the audio/ video streams,
 total processing time separated by process/ procedure, etc. Helper functionality
 would be incorporated accordingly to enable reporting.
+
+\chapter{Conclusion and Acknowlegement}
+
+In conclusion, as of the time of writing, major works have been done in realising
+the integrated transcription system described in Chapter 1. The overall system
+architecture has been developed, which serves as a blueprint to develop three
+different procedures --- \texttt{google} to transcribe using Google Cloud Speech
+API, \texttt{lvcsr} to transcribe using the in-house LVCSR system and
+\texttt{capgen} to generate keyframe captions for videos --- while keeping the
+system robust, modular and extensible. However, work still needs to be done in
+adapting the architecture to suit additional requirements for multi-channel
+recording transcription, as well as versioning for different components, and
+logging/ reporting for the system. The whole project is on track to finish within the next 3 months.
+
+The author of this report would like to thank the supervisor, Associate Professor
+Chng Eng Siong, as well as members of SLRG for the guidance and assistance rendered
+during the course of the project.

@@ -322,7 +322,7 @@ format --- MPEG Layer 4 video (\texttt{.mp4} files).
 
 The converter is implemented similarly using \texttt{FFmpeg}~\cite{ffmpeg} and the
 Python wrapper \texttt{FFmpy}~\cite{ffmpy}. The module \texttt{convert-1.0} would
-take a raw video file from \texttt{data/file\_id/raw}, convert it and put the
+take a raw video file from \texttt{data/file\_id/\\ raw}, convert it and put the
 converted file in \texttt{data/file\_id/convert}. It is a reasonably quick process
 as well; no temporary files are created and successful completion is checked by the
 presence of the output file.
@@ -348,3 +348,32 @@ the system manifest:
         ...
     }
 \end{lstlisting}
+
+\section{Summary}
+
+In summary, the following body of work has been done to realise the transcription
+system:
+
+\begin{table}[h]
+\begin{tabularx}{\textwidth}{ll}
+    \textbf{Component} & \textbf{Work done} \\
+    System architecture & Develop the system architecture \\
+    System executable & Develop the Python executable \\
+    Module \texttt{resample} & Develop the Python module \\ 
+    Module \texttt{diarize} & Develop the Python wrapper
+    around external module \\
+    Module \texttt{google} & Develop the Python module \\
+    Module \texttt{lvcsr} & Modify the existing module to
+    fit the system requirements \\
+    Module \texttt{convert} & Develop the Python module \\
+    Module \texttt{capgen} & Modify the existing module to
+    fit the system requirements \\
+\end{tabularx}
+\end{table}
+
+In addition, the work done has demonstrated, at certain levels, three qualitative
+objectives\footnote{See Section 1.2 Objective.} for the system --- Modularity,
+Extensibility and Robustness.
+
+The next chapter would focus on the remaining work to be done on the transcription
+system.
